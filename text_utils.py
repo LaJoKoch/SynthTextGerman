@@ -101,9 +101,12 @@ class RenderFont(object):
         self.p_curved = 1.0
         self.baselinestate = BaselineState()
 
-        # text-source : gets english text:
+        # text-source: gets english text:
+        """ self.text_source = TextSource(min_nchar=self.min_nchar,
+                                      fn=osp.join(data_dir,'newsgroup/newsgroup.txt')) """
+        # text-source: gets german text:
         self.text_source = TextSource(min_nchar=self.min_nchar,
-                                      fn=osp.join(data_dir,'newsgroup/newsgroup.txt'))
+                                      fn=osp.join(data_dir,'german_textSource/3M_sentences_LeipzigCorpora.txt'))
 
         # get font-state object:
         self.font_state = FontState(data_dir)
@@ -415,7 +418,7 @@ class FontState(object):
     def __init__(self, data_dir='data'):
 
         char_freq_path = osp.join(data_dir, 'models/char_freq.cp')        
-        font_model_path = osp.join(data_dir, 'models/font_px2pt.cp')
+        font_model_path = osp.join(data_dir, 'models/font_px2pt_923fonts.cp')
 
         # get character-frequencies in the English language:
         with open(char_freq_path,'rb') as f:
@@ -522,7 +525,7 @@ class TextSource(object):
                       'LINE':self.sample_line,
                       'PARA':self.sample_para}
 
-        with open(fn,'r') as f:
+        with open(fn,'r', encoding='utf-8') as f:
             self.txt = [l.strip() for l in f.readlines()]
 
         # distribution over line/words for LINE/PARA:
