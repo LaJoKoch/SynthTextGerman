@@ -1,6 +1,9 @@
 import sys
 import signal
 from contextlib import contextmanager
+import threading
+import _thread
+from sys import platform
 
 class Color: #pylint: disable=W0232
     GRAY=30
@@ -32,13 +35,26 @@ def error(msg):
 
 # http://stackoverflow.com/questions/366682/how-to-limit-execution-time-of-a-function-call-in-python
 class TimeoutException(Exception): pass
+
 @contextmanager
 def time_limit(seconds):
-    def signal_handler(signum, frame):
-        raise TimeoutException(colorize(Color.RED, "   *** Timed out!", highlight=True))
-    signal.signal(signal.SIGALRM, signal_handler)
-    signal.alarm(seconds)
-    try:
-        yield
-    finally:
-        signal.alarm(0)
+    
+    if platform != 'win32':
+        def signal_handler(signum, frame):
+            raise TimeoutException(colorize(Color.RED, "   *** Timed out!", highlight=True))
+        signal.signal(signal.SIGALRM, signal_handler)
+        signal.alarm(seconds)
+        try:
+            yield
+        finally:
+            signal.alarm(0)
+    else: 
+        timer = threading.Timer(seconds, lambda: _thread.interrupt_main())
+        timer.start()
+        try:
+            yield
+        except KeyboardInterrupt: 
+            raise TimeoutException(colorize(Color.RED, "   *** Timed out!", highlight=True))
+        finally: 
+            timer.cancel()
+        

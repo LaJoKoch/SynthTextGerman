@@ -21,6 +21,7 @@ import text_utils as tu
 from colorize3_poisson import Colorize
 from common import *
 import traceback, itertools
+import time
 
 
 class TextRegions(object):
@@ -468,7 +469,7 @@ class RendererV3(object):
         return is_good
 
 
-    def get_min_h(selg, bb, text):
+    def get_min_h(self, bb, text):
         # find min-height:
         h = np.linalg.norm(bb[:,3,:] - bb[:,0,:], axis=0)
         # remove newlines and spaces:
@@ -655,6 +656,7 @@ class RendererV3(object):
                                                          regions['homography_inv'][ireg])
                     else:
                         with time_limit(self.max_time):
+                            #time.sleep(60)
                             txt_render_res = self.place_text(img,place_masks[ireg],
                                                              regions['homography'][ireg],
                                                              regions['homography_inv'][ireg])
@@ -687,5 +689,5 @@ class RendererV3(object):
                     viz_masks(2,img,seg,depth,regions['label'])
                     # viz_regions(rgb.copy(),xyz,seg,regions['coeff'],regions['label'])
                     if i < ninstance-1:
-                        raw_input(colorize(Color.BLUE,'continue?',True))                    
+                        input(colorize(Color.BLUE,'continue?',True))                    
         return res
