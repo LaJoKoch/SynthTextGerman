@@ -240,6 +240,11 @@ def get_text_placement_mask(xyz,mask,plane,pad=2,viz=False):
     rect = cv2.minAreaRect(pts_fp[0].copy().astype('float32'))
     box = np.array(cv2.boxPoints(rect))
     R2d = su.unrotate2d(box.copy())
+    # check rotation matrix to avoid 180 degree rotated text
+    if R2d[0][0] < 0:
+        R2d[0][0] = -R2d[0][0]
+        R2d[1][1] = -R2d[1][1]
+
     box = np.vstack([box,box[0,:]]) #close the box for visualization
 
     mu = np.median(pts_fp[0],axis=0)
@@ -392,10 +397,12 @@ class RendererV3(object):
             res = get_text_placement_mask(xyz,seg==l,regions['coeff'][idx],pad=2)
             if res is not None:
                 mask,H,Hinv = res
-                masks.append(mask)
-                Hs.append(H)
-                Hinvs.append(Hinv)
-                filt[idx] = True
+                # check the homography matrix to avoid generating mirrored text
+                if self.nice_homography(Hinv):
+                    masks.append(mask)
+                    Hs.append(H)
+                    Hinvs.append(Hinv)
+                    filt[idx] = True
         regions = self.filter_regions(regions,filt)
         regions['place_mask'] = masks
         regions['homography'] = Hs
@@ -432,6 +439,28 @@ class RendererV3(object):
 
         bbs_h = np.reshape(bbs_h, (3,4,n), order='F')
         return bbs_h[:2,:,:]
+
+    def nice_homography(self, H):
+        # Construct a bb0 (2x4x1), and transform it to bb. Just check the points order of bb0 and bb.
+        wordBB0 = np.array([[1,10,10,1], [10,10,20,20]]).reshape((2,4,1))
+        wordBB = self.homographyBB(wordBB0.copy(), H)
+        wordBB0 = wordBB0[:,:,0]
+        wordBB = wordBB[:,:,0]
+        vec00 = wordBB0[:,3] - wordBB0[:,0]
+        vec01 = wordBB0[:,2] - wordBB0[:,1]
+        vec02 = wordBB0[:,1] - wordBB0[:,0]
+        vec03 = wordBB0[:,2] - wordBB0[:,3]
+        vec10 = wordBB[:,3] - wordBB[:,0]
+        vec11 = wordBB[:,2] - wordBB[:,1]
+        vec12 = wordBB[:,1] - wordBB[:,0]
+        vec13 = wordBB[:,2] - wordBB[:,3]
+
+        # Check the vectors of corresponding pairs whether have the same orientation.
+        if np.dot(vec00, vec10) < 0 or np.dot(vec01, vec11) < 0 or np.dot(vec02, vec12) < 0 or np.dot(vec03, vec13) < 0:
+            clockwise = False
+        else:
+            clockwise = True
+        return clockwise
 
     def bb_filter(self,bb0,bb,text):
         """
@@ -504,8 +533,12 @@ class RendererV3(object):
         else:
             text_mask,loc,bb,text = render_res
 
+        # expand text mask through dilation to increase distance between text within specific region
+        kernel = np.ones((5,5), np.uint8)
+        text_mask_dil = cv2.dilate(text_mask, kernel, iterations=1)
+
         # update the collision mask with text:
-        collision_mask += (255 * (text_mask>0)).astype('uint8')
+        collision_mask += (255 * (text_mask_dil>0)).astype('uint8')
 
         # warp the object mask back onto the image:
         text_mask_orig = text_mask.copy()

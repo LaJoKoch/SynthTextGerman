@@ -45,6 +45,8 @@ class Layer(object):
 class FontColor(object):
 
     def __init__(self, col_file):
+        # threshold to limit color difference
+        self.gray_diff_threshold = 50
         with open(col_file,'rb') as f:
             #self.colorsRGB = cp.load(f)
             u = pickle._Unpickler(f)
@@ -66,6 +68,11 @@ class FontColor(object):
         """
         col_sample = col_mean + col_std * np.random.randn()
         return np.clip(col_sample, 0, 255).astype('uint8')
+
+    def rgb_color_diff_in_gray(self, col1, col2):
+        gray1 = col1[0]*0.299 + col1[1]*0.587 + col1[2]*0.114
+        gray2 = col2[0]*0.299 + col2[1]*0.587 + col2[2]*0.114
+        return abs(gray1 - gray2)
 
     def sample_from_data(self, bg_mat):
         """
@@ -90,10 +97,25 @@ class FontColor(object):
         col1 = self.sample_normal(data_col[:3],data_col[3:6])
         col2 = self.sample_normal(data_col[6:9],data_col[9:12])
 
+        # limit color difference between foreground and background
+        true_bg_col = np.mean(np.mean(bg_orig, axis=0), axis=0)
         if nn < self.ncol:
+            fg_col = col2
+            diff = self.rgb_color_diff_in_gray(fg_col, true_bg_col)
+            while diff < self.gray_diff_threshold:
+                #print('change color')
+                fg_col = np.random.choice(256, 3).astype('uint8')
+                diff = self.rgb_color_diff_in_gray(fg_col, true_bg_col)
+            col2 = fg_col
             return (col2, col1)
         else:
-            # need to swap to make the second color close to the input backgroun color
+            # need to swap to make the second color close to the input background color
+            fg_col = col1
+            diff = self.rgb_color_diff_in_gray(fg_col, true_bg_col)
+            while diff < self.gray_diff_threshold:
+                fg_col = np.random.choice(256, 3).astype('uint8')
+                diff = self.rgb_color_diff_in_gray(fg_col, true_bg_col)
+            col1 = fg_col
             return (col1, col2)
 
     def mean_color(self, arr):
