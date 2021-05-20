@@ -421,11 +421,11 @@ class FontState(object):
         char_freq_path = osp.join(data_dir, 'models/char_freq.cp')        
         font_model_path = osp.join(data_dir, 'models/font_px2pt_923fonts.cp')
 
-        # get character-frequencies in the English language:
+        # get character-frequencies in the German language:
         with open(char_freq_path,'rb') as f:
             #self.char_freq = cp.load(f)
             u = pickle._Unpickler(f)
-            u.encoding = 'latin1'
+            u.encoding = 'utf-8'
             p = u.load()
             self.char_freq = p
 
@@ -433,7 +433,7 @@ class FontState(object):
         with open(font_model_path,'rb') as f:
             #self.font_model = cp.load(f)
             u = pickle._Unpickler(f)
-            u.encoding = 'latin1'
+            u.encoding = 'utf-8'
             p = u.load()
             self.font_model = p
             
