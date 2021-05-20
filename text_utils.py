@@ -370,11 +370,12 @@ class RenderFont(object):
             text = self.text_source.sample(nline,nchar,text_type)
             if len(text)==0 or np.any([len(line)==0 for line in text]):
                 continue
-            #print colorize(Color.GREEN, text)
 
             # render the text:
             txt_arr,txt,bb = self.render_curved(font, text)
             bb = self.bb_xywh2coords(bb)
+            print(text)
+            print(colorize(Color.MAGENTA, font))
 
             # make sure that the text-array is not bigger than mask array:
             if np.any(np.r_[txt_arr.shape[:2]] > np.r_[mask.shape[:2]]):
