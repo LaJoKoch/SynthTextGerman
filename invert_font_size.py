@@ -1,6 +1,10 @@
 # Author: Ankush Gupta
 # Date: 2015
-"Script to generate font-models."
+
+"""
+Run this after adding more fonts to generate new font models: font_px2pt.cp
+Font models map each pixel of the font to related points, because points have physical measure of length while pixels dont. 
+"""
 
 import pygame
 from pygame import freetype

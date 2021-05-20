@@ -1,4 +1,72 @@
-# SynthText
+# SynthText with German Language Support
+Modified from [here](https://github.com/ankush-me/SynthText.git) to support german characters and text.
+
+**Scene-Text Image Samples generated with the code**
+![German Scene-Text Samples](samples_german.png "German Synthetic Samples")
+
+### Environment
+OS: Windows10
+
+python==3.8.5
+
+opencv==4.5.1
+
+pygame==1.9.6
+
+### Adjustments to support german text
++ added german text source with [3 million sentences taken from 2015 newspaper texts](https://www.kaggle.com/rtatman/3-million-german-sentences)
+  + integrated it in `text_utils.py` within the `class RenderFont()` 
+  + set the encoding to utf-8 in `class TextSource()`
+  + created corresponding character frequency model with `update_freq.py`
+
+  
++ added fonts with umlauts (most of them were [google fonts](https://fonts.google.com/)) and updated the `fontlist.txt`
+  + created corresponding font model with `invert_font_size.py`
+  + integrated font model in `text_utils.py` within the `class FontState`
+
+### Usage Steps
+1. Run the script `add_more_data.py` to download the pre-processed background images with their depth and segmentation masks and to merge them into one h5 file.
+
+   If downloading with `add_more_data.py` doesn't work you can use wget in git bash terminal to download them manually (more information to use wget on windows see [here](https://gist.github.com/evanwill/0207876c3243bbb6863e65ec5dc3f058)).
+2. Run `gen_more.py` to generate new synthetic scene text images withe the pre-processed data.
+
+   Or run `gen_more.py --viz` to get a visualization after each generated sample.
+3. Visualize your results with `visualize_results.py`.
+
++ If you have the same issue as described in issue [#105](https://github.com/ankush-me/SynthText/issues/105) you can use the `test_fonts.py` to see which fonts are the reason for this problem.
+
+**Data Structure**
+```bash
+data
+├── bg_img                                   : pre-processed images
+├── fonts
+│   ├── ubuntu.ttf
+│   ├── ...                                  : added fonts 
+│   └── fontlist.txt                         : updated fontlist 
+├── german_textSource
+│   ├── 3M_sentences_LeipzigCorpora.txt      : added text source
+│   └── words_LeipzigCorpora.csv
+├── models
+│   ├── char_freq.cp                         : updated character model
+│   ├── colors_new.cp
+│   └── font_px2pt.cp                        : updated font model
+├── newsgroup
+│   └── newsgroup.txt
+├── depth.h5
+├── dset_8000.h5                             : pre-processed data [img, depth, seg]
+├── dset.h5
+└── seg.h5
+```
+**Parameter Settings**
++ number of images: in `gen_more.py` line 24
++ rendering words, lines or paragraphs: in `text_utils.py` line 86
+  + max words for lines/paragraphs: in `text_utils.py` line 532
+
+
++ font state (curved, underlined, etc.): in `text_utils.py` line 400
++ text regions: in `synthgen.py` line 32, line 380 and line 681
+
+### The Rest of the README is from the original repository 
 Code for generating synthetic text images as described in ["Synthetic Data for Text Localisation in Natural Images", Ankush Gupta, Andrea Vedaldi, Andrew Zisserman, CVPR 2016](http://www.robots.ox.ac.uk/~vgg/data/scenetext/).
 
 
