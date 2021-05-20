@@ -88,3 +88,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# generated data 
+data/
+results/
+
+# profiling reports
+*.prof
