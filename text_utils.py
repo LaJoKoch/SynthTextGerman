@@ -84,8 +84,8 @@ class RenderFont(object):
         # distribution over the type of text:
         # whether to get a single word, paragraph or a line:
         self.p_text = {0.0 : 'WORD',
-                       0.0 : 'LINE',
-                       1.0 : 'PARA'}
+                       1.0 : 'LINE',
+                       0.0 : 'PARA'}
 
         ## TEXT PLACEMENT PARAMETERS:
         self.f_shrink = 0.90
@@ -374,8 +374,8 @@ class RenderFont(object):
             # render the text:
             txt_arr,txt,bb = self.render_curved(font, text)
             bb = self.bb_xywh2coords(bb)
-            print(text)
-            print(colorize(Color.MAGENTA, font))
+            #print(text)
+            #print(colorize(Color.MAGENTA, font))
 
             # make sure that the text-array is not bigger than mask array:
             if np.any(np.r_[txt_arr.shape[:2]] > np.r_[mask.shape[:2]]):
@@ -531,9 +531,9 @@ class TextSource(object):
 
         # distribution over line/words for LINE/PARA:
         self.p_line_nline = np.array([0.85, 0.10, 0.05])
-        self.p_line_nword = [4,3,12]  # normal: (mu, std)
+        self.p_line_nword = [4,3,5]  # normal: (mu, std)
         self.p_para_nline = [1.0,1.0]#[1.7,3.0] # beta: (a, b), max_nline
-        self.p_para_nword = [1.7,3.0,10] # beta: (a,b), max_nword
+        self.p_para_nword = [1.7,3.0,5] # beta: (a,b), max_nword
 
         # probability to center-align a paragraph:
         self.center_para = 0.5

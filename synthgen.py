@@ -668,6 +668,7 @@ class RendererV3(object):
 
             m = self.get_num_text_regions(nregions)#np.arange(nregions)#min(nregions, 5*ninstance*self.max_text_regions))
             reg_idx = np.arange(min(2*m,nregions))
+            # deselect the random shuffle to use largest region first for placing text
             np.random.shuffle(reg_idx)
             reg_idx = reg_idx[:m]
 
@@ -678,7 +679,7 @@ class RendererV3(object):
 
             # process regions: 
             num_txt_regions = len(reg_idx)
-            NUM_REP = 5 # re-use each region three times:
+            NUM_REP = 3 # re-use each region three times:
             reg_range = np.arange(NUM_REP * num_txt_regions) % num_txt_regions
             for idx in reg_range:
                 ireg = reg_idx[idx]

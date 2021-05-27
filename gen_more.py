@@ -22,8 +22,8 @@ from PIL import Image
 
 ## Define some configuration variables:
 NUM_IMG = -1 # no. of images to use for generation (-1 to use all available):
-INSTANCE_PER_IMAGE = 1 # no. of times to use the same image
-SECS_PER_IMG = 5 #max time per image in seconds
+INSTANCE_PER_IMAGE = 30 # no. of times to use the same image (30 instances for ca. 200.000 images, which needs ca 150GB storage)
+SECS_PER_IMG = 2 #max time per image in seconds
 
 # path to the data-file, containing image, depth and segmentation:
 DATA_PATH = 'data'
@@ -77,7 +77,7 @@ def main(viz=False):
   global NUM_IMG
   if NUM_IMG < 0:
     NUM_IMG = N
-  start_idx,end_idx = 2300,min(NUM_IMG, N)
+  start_idx,end_idx = 0,min(NUM_IMG, N)
 
   RV3 = RendererV3(DATA_PATH,max_time=SECS_PER_IMG)
 
@@ -113,7 +113,7 @@ def main(viz=False):
       res = RV3.render_text(img,depth,seg,area,label,
                             ninstance=INSTANCE_PER_IMAGE,viz=viz)
       t2=time.time() # endtime 
-      print('time to render this samples: ', t2-t1)
+      print(colorize(Color.BLUE, f'time per image instance: {(t2-t1)/INSTANCE_PER_IMAGE}', bold=True))
 
       if len(res) > 0:
         # non-empty : successful in placing text:
@@ -137,3 +137,12 @@ if __name__=='__main__':
   parser.add_argument('--viz',action='store_true',dest='viz',default=False,help='flag for turning on visualizations')
   args = parser.parse_args()
   main(args.viz)
+  # profiling
+  #import cProfile, pstats 
+  #profiler = cProfile.Profile()
+  #profiler.enable()
+  #main(args.viz)
+  #profiler.disable()
+  #stats = pstats.Stats(profiler).sort_stats('ncalls')
+  #stats.strip_dirs()
+  #stats.print_stats()
