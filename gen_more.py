@@ -22,7 +22,7 @@ from PIL import Image
 
 ## Define some configuration variables:
 NUM_IMG = -1 # no. of images to use for generation (-1 to use all available):
-INSTANCE_PER_IMAGE = 30 # no. of times to use the same image (30 instances for ca. 200.000 images, which needs ca 150GB storage)
+INSTANCE_PER_IMAGE = 32 # no. of times to use the same image (30 instances for ca. 200.000 images, which needs ca 150GB storage)
 SECS_PER_IMG = 2 #max time per image in seconds
 
 # path to the data-file, containing image, depth and segmentation:
@@ -50,11 +50,11 @@ def add_res_to_db(imgname,res,db):
     db['data'][dname].attrs['charBB'] = res[i]['charBB']
     db['data'][dname].attrs['wordBB'] = res[i]['wordBB']
 
-    #db['data'][dname].attrs['txt'] = res[i]['txt']
+    db['data'][dname].attrs['txt'] = res[i]['txt']
 
-    L = res[i]['txt']
-    L = [n.encode("utf-8", "ignore") for n in L]
-    db['data'][dname].attrs['txt'] = L
+    #L = res[i]['txt']
+    #L = [n.encode("utf-8", "ignore") for n in L]
+    #db['data'][dname].attrs['txt'] = L
 
     # adding unicode strings of variable length 
     #db['data'][dname].attrs.create('txt', res[i]['txt'], dtype=h5py.vlen_dtype(np.dtype('U')))

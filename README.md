@@ -1,5 +1,5 @@
 # SynthText with German Language Support
-Modified from [here](https://github.com/ankush-me/SynthText.git) to support german characters and text.
+Modified from [here](https://github.com/ankush-me/SynthText.git) to support german characters and text. The project was carried out during an internship at the Fraunhofer-Institute for Production Technology and Automation (IPA) in Stuttgart.
 
 **Scene-Text Image Samples generated with the code**
 ![German Scene-Text Samples](samples_german.png "German Synthetic Samples")
@@ -15,11 +15,11 @@ pygame==1.9.6
 
 ### Adjustments to support german text
 + added german text source with [3 million sentences taken from 2015 newspaper texts](https://www.kaggle.com/rtatman/3-million-german-sentences)
-  + integrated it in `text_utils.py` within the `class RenderFont()` 
+  + integrated it in `text_utils.py` within the `class RenderFont()`
   + set the encoding to utf-8 in `class TextSource()`
   + created corresponding character frequency model with `update_freq.py`
 
-  
+
 + added fonts with umlauts (most of them were [google fonts](https://fonts.google.com/)) and updated the `fontlist.txt`
   + created corresponding font model with `invert_font_size.py`
   + integrated font model in `text_utils.py` within the `class FontState`
@@ -41,8 +41,8 @@ data
 ├── bg_img                                   : pre-processed images
 ├── fonts
 │   ├── ubuntu.ttf
-│   ├── ...                                  : added fonts 
-│   └── fontlist.txt                         : updated fontlist 
+│   ├── ...                                  : added fonts
+│   └── fontlist.txt                         : updated fontlist
 ├── german_textSource
 │   ├── 3M_sentences_LeipzigCorpora.txt      : added text source
 │   └── words_LeipzigCorpora.csv
@@ -66,7 +66,7 @@ data
 + font state (curved, underlined, etc.): in `text_utils.py` line 400
 + text regions: in `synthgen.py` line 32, line 380 and line 681
 
-### The Rest of the README is from the original repository 
+### The rest of the README is from the original repository
 Code for generating synthetic text images as described in ["Synthetic Data for Text Localisation in Natural Images", Ankush Gupta, Andrea Vedaldi, Andrew Zisserman, CVPR 2016](http://www.robots.ox.ac.uk/~vgg/data/scenetext/).
 
 
