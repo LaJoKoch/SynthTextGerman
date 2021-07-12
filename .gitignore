@@ -90,8 +90,8 @@ ENV/
 .ropeproject
 
 # generated data 
-data/
-results/
+#data/
+#results/
 
 # profiling reports
 *.prof
